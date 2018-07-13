@@ -20,6 +20,45 @@
                 <a href="/clear_session" class="btn btn-dark my-2 my-sm-0" type="submit">Logout</a>
             </form>
         </nav>
+        <div class="row">
+            <div class="col-sm-12">
+                <h4 style="text-align: center;margin-top:2%">Admin Features</h4>
+                <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in total_users %}
+                        <tr>
+                            <th>{{ user['id'] }}</th>
+                            <td>{{ user['first_name'] }}</td>
+                            <td>{{ user['email'] }}</td>
+
+                            {% if user['user_level'] == 9 %}
+                                <td>Admin</td>
+                            {% else %}
+                                <td>Normal User</td>
+                            {% endif %}
+
+                            {% if user['user_level'] == 9 %}
+                                <td><a href="/remove_user/{{user['id']}}" type="button" class="btn btn-danger btn-sm">Remove</a><a href="/remove_admin/{{user['id']}}" type="button" class="btn btn-danger btn-sm" style="margin-left:2%">Remove Admin</a></td>
+                            {% else %}
+                                <td><a href="/remove_user/{{user['id']}}"  type="button" class="btn btn-danger btn-sm">Remove</a><a href="/create_admin/{{user['id']}}"  type="button" class="btn btn-success btn-sm" style="margin-left:2%">Make Admin</a></td>
+                            {% endif %}
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+        <hr>
         <div class="row" style="margin-top:2%">
             <div class="col-sm-6">
                 <h4 style="text-align: center"><u>{{session['n_received_messages']}} Message(s) for you ({{session['name']}})</u></h4>

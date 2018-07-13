@@ -37,3 +37,7 @@ VALUES
 ("Oi Amanda. Tudo bem por ai?",4081,4080,now(),now()),
 ("Hey baby! How are you doing today?",4082,4080,now(),now()),
 ("Hey doll! Are you dolling it up today?",4084,4080,now(),now());
+
+/* Adding user levels */
+
+UPDATE regusers SET user_level=9 WHERE id = 4080;

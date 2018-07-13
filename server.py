@@ -36,7 +36,19 @@ def renderIndex():
         all_users_query = "SELECT id,first_name FROM regusers WHERE id NOT LIKE %(user_id)s;"
         all_users = mysql.query_db(all_users_query,data)
 
-        return render_template("index.html",received_messages=received_messages,all_users=all_users)
+        #getting user_level
+        user_level_query = "SELECT user_level FROM regusers WHERE id LIKE %(user_id)s;"
+        user_level = mysql.query_db(user_level_query,data)[0]['user_level']
+
+        if user_level == 9:
+            #This is an admin user
+            #Getting all users to create admin table
+            total_users_query = "SELECT id,first_name,email,user_level FROM regusers;"
+            total_users = mysql.query_db(total_users_query)
+
+            return render_template("admin.html",received_messages=received_messages,all_users=all_users,total_users=total_users)
+        else:
+            return render_template("index.html",received_messages=received_messages,all_users=all_users)
     else:
         return render_template("login_and_registration.html")
 
@@ -126,13 +138,6 @@ def logIn():
         flash("Issues with email or password","login_error")
         return redirect('/')
 
-@app.route('/logout')
-def sessionLogout():
-    session['logged_in'] = False
-    print(session)
-    flash("You've been loged out!","logout")
-    return redirect('/')
-
 @app.route('/send_message',methods=['POST'])
 def sendMessage():
     data = {
@@ -166,6 +171,33 @@ def deleteMessage(message_id):
 @app.route('/clear_session')
 def clear_session():
     session.clear()
+    return redirect('/')
+
+@app.route('/remove_user/<user_id>')
+def remove_user(user_id):
+    user_delete_data = {
+        'user_id': user_id,
+        }
+    user_delete_query = "DELETE FROM regusers WHERE id LIKE %(user_id)s"
+    mysql.query_db(user_delete_query,user_delete_data)
+    return redirect('/')
+
+@app.route('/remove_admin/<user_id>')
+def remove_admin(user_id):
+    admin_remove_data = {
+        'user_id': user_id,
+        }
+    admin_remove_query = "UPDATE regusers SET user_level=1 WHERE id LIKE %(user_id)s"
+    mysql.query_db(admin_remove_query,admin_remove_data)
+    return redirect('/')
+
+@app.route('/create_admin/<user_id>')
+def create_admin(user_id):
+    admin_create_data = {
+        'user_id': user_id,
+        }
+    admin_create_query = "UPDATE regusers SET user_level=9 WHERE id LIKE %(user_id)s"
+    mysql.query_db(admin_create_query,admin_create_data)
     return redirect('/')
 
 if __name__=="__main__":
